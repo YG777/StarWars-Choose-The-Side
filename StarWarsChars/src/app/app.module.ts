@@ -6,6 +6,18 @@ import { TabsComponent } from './tabs/tabs.component';
 import { ListComponent } from './list/list.component';
 import { ItemComponent } from './item/item.component';
 import { CreateCharacterComponent } from './create-character/create-character.component';
+import { FormsModule} from '@angular/forms';
+import { HeaderComponent } from './header/header.component';
+import {RouterModule, Routes} from '@angular/router';
+
+const routes: Routes = [
+  {path: 'characters', component: TabsComponent, children: [
+    {path: '', redirectTo: 'all', pathMatch: 'full'},
+    {path: ':side', component: ListComponent}
+  ]},
+  {path: 'new-character', component: CreateCharacterComponent},
+  {path: '**', redirectTo: '/characters'}
+];
 
 @NgModule({
   declarations: [
@@ -13,10 +25,11 @@ import { CreateCharacterComponent } from './create-character/create-character.co
     TabsComponent,
     ListComponent,
     ItemComponent,
-    CreateCharacterComponent
+    CreateCharacterComponent,
+    HeaderComponent
   ],
   imports: [
-    BrowserModule, NgbModule
+    BrowserModule, NgbModule, FormsModule, RouterModule.forRoot(routes)
   ],
   providers: [],
   bootstrap: [AppComponent]
