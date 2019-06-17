@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { LogService } from './log.service';
+import { Subject } from 'rxjs/Subject';
+import { HttpClient} from '@angular/common/http';
+import 'rxjs/add/operator/map';
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +15,35 @@ export class StarWarsService {
   ];
 
   private logService: LogService;
+  http: HttpClient;
 
-  constructor(logService: LogService) {
+
+  //Subject is a substance provided by rxjs
+  //It is a generic type
+  //It is used here instead of event emitter
+  charactersChanged = new Subject<void>();
+
+  constructor(logService: LogService, http: HttpClient) {
     this.logService = logService;
+    this.http = http;
+  }
+
+  fetchCharacters() {
+    this.http.get('https://swapi.co/api/people/')
+    .map((response) => { // <--change the data for the app
+      const data = response;
+      const extractedChars = data.results;
+      const chars = extractedChars.map((char) => {
+        return {name: char.name, side: ''}
+      });
+      return chars;
+    })
+    .subscribe(
+      (data) => {
+        this.characters = data;
+        this.charactersChanged.next();
+      }
+    );
   }
 
   getCharacters(chosenList) {
@@ -35,7 +64,7 @@ export class StarWarsService {
   }
 
   addCharacter(name, side) {
-    const newChar = {name:name, side:side};
+    const newChar = { name: name, side: side };
     this.characters.push(newChar);
   }
 
