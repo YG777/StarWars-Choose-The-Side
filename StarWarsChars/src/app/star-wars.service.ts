@@ -15,13 +15,11 @@ export class StarWarsService {
   ];
 
   private logService: LogService;
-  http: HttpClient;
-
-
   //Subject is a substance provided by rxjs
   //It is a generic type
   //It is used here instead of event emitter
   charactersChanged = new Subject<void>();
+  http: HttpClient;
 
   constructor(logService: LogService, http: HttpClient) {
     this.logService = logService;
@@ -29,8 +27,8 @@ export class StarWarsService {
   }
 
   fetchCharacters() {
-    this.http.get('https://swapi.co/api/people/')
-    .map((response) => { // <--change the data for the app
+    this.http.get<any>('https://swapi.co/api/people/')
+    .map((response) => {
       const data = response;
       const extractedChars = data.results;
       const chars = extractedChars.map((char) => {
